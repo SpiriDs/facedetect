@@ -55,7 +55,10 @@ class App extends Component {
       rightCol: width - (clarifaiFace.right_col * width),
       bottomRow: height - (clarifaiFace.bottom_row * height),
 
-      /* bottomRow: clarifaiFace.bottom_row * height,
+      /* 
+      --This is not working. rightCol and BottomRow has to be like above
+
+      bottomRow: clarifaiFace.bottom_row * height,
       leftCol: clarifaiFace.left_col * width,
       rightCol: clarifaiFace.right_col * width,
       topRow: clarifaiFace.top_row * height */
