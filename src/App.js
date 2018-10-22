@@ -5,6 +5,8 @@ import Particles from 'react-particles-js';
 import Clarifai from 'clarifai';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from "./components/Navigation/Navigation";
+import SignIn from "./components/SignIn/SignIn";
+import Register from "./components/Register/Register";
 import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
@@ -38,6 +40,8 @@ class App extends Component {
       input: '',
       imageUrl: '',
       box: {},
+      route: 'signin',
+      signedIn: false
     }
   }
 
@@ -46,8 +50,6 @@ class App extends Component {
     const image = document.getElementById('inputimage');
     const width = Number(image.width);
     const height = Number(image.height);
-    console.log(width, height);
-    console.log(clarifaiFace)
     return {
      
       leftCol: clarifaiFace.left_col * width,
@@ -55,14 +57,14 @@ class App extends Component {
       rightCol: width - (clarifaiFace.right_col * width),
       bottomRow: height - (clarifaiFace.bottom_row * height),
 
-      /* 
-      --This is not working. rightCol and BottomRow has to be like above
+      
+      /* --This is not working. rightCol and BottomRow has to be like above */
 
-      bottomRow: clarifaiFace.bottom_row * height,
-      leftCol: clarifaiFace.left_col * width,
-      rightCol: clarifaiFace.right_col * width,
-      topRow: clarifaiFace.top_row * height */
-
+      /* leftCol: clarifaiFace.top_row * 100 + '%',
+      topRow: clarifaiFace.left_col * 100 + '%',
+      rightCol:clarifaiFace.right_col * 100 + '%',
+      bottomRow: clarifaiFace.bottom_row * 100 + '%' 
+ */
       /* Object {
          bottomRow: 373.77838816, 
          leftCol: 131.91183, 
@@ -96,14 +98,49 @@ App.js:68 */
            
    }
 
+   onRouteChange = (route) => {
+     this.setState({route: route});
+     if (route === 'home') {
+      return(
+        this.setState({signedIn: true})
+      )
+    }else{
+      this.setState({signedIn: false})
+    }
+   } 
+
+   /* signedIn = (route) => {
+     if (route === 'home') {
+       return(
+         this.setState({signedIn: true})
+       )
+     }else{
+       this.setState({signedIn: false})
+     }
+   } */
+
   render() {
-    return ( <div className = "App">
-      <Particles className = 'particles' params = {particlesOptions} />
-      <Navigation / >
-      <Logo / >
-      <Rank / >
-      <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/ > 
-      <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} / >  
+    const { signedIn, imageUrl, route, box } = this.state; 
+    return ( 
+      <div className = "App">
+        <Particles className = 'particles' params = {particlesOptions} />
+        <Navigation onRouteChange={this.onRouteChange} signedIn={signedIn} />
+        
+        {
+          route === 'home'
+          ? <div>
+              <Logo />
+              <Rank />
+              <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/> 
+              <FaceRecognition box={box} imageUrl={imageUrl} /> 
+            </div>
+          :
+          (
+            route === 'signin'
+              ? <SignIn onRouteChange={this.onRouteChange} />
+              : <Register onRouteChange={this.onRouteChange} />
+          )  
+        }
       </div>
     );
   }
